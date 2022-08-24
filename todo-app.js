@@ -108,7 +108,7 @@
 
             todoItemForm.input.value = ''
 
-            button.textContent = 'ads'
+            document.querySelector('.btn').disabled = true
         })
         
     }
