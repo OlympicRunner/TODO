@@ -63,11 +63,20 @@
             deleteButton
         }
     }
-    
-    
-    function createTodoApp(container, title = 'Список дел') {
 
 
+    let todoBeforeList = [
+        { name: 'Построить скворешник', done: true },
+        { name: 'Назвать сына', done: false },
+        { name: 'закончить войну', done: false },
+        { name: 'Научится JS программированию', done: true }
+    ]
+
+
+    
+    function createTodoApp(container, title = 'Список дел', todoBeforeList) {
+
+        console.log(todoBeforeList)
 
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
@@ -76,23 +85,9 @@
         container.append(todoAppTitle)
         container.append(todoItemForm.form)
         container.append(todoList)
-        
-        
 
-        todoItemForm.form.addEventListener('submit', function(e) {
-
-            // button.disabled = false
-
-            e.preventDefault()
-
-
-            if(!todoItemForm.input.value) {
-                return;  
-            } 
-
-
-            let todoItem = createTodoItem(todoItemForm.input.value) 
-
+        function createItem(newValue) {
+            let todoItem = createTodoItem(newValue) 
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
             })
@@ -102,10 +97,32 @@
                     todoItem.item.remove()
                 }
             })
-
             todoList.append(todoItem.item)
+        }
+
+        // function nextNext () {
 
 
+        //     for (let beforeItem of todoBeforeList) {
+        //         createItem(beforeItem.name)
+        //         if (beforeItem.done == true) {
+        //             console.log('там где ', beforeItem.name)
+        //         }
+        //     }
+        // }
+
+        // nextNext()
+
+        todoItemForm.form.addEventListener('submit', function(e) {
+            e.preventDefault()
+
+            if(!todoItemForm.input.value) {
+                return;  
+            } 
+
+            let newValue = todoItemForm.input.value
+
+            createItem(newValue)
             todoItemForm.input.value = ''
 
             document.querySelector('.btn').disabled = true
@@ -113,10 +130,9 @@
         
     }
 
-    window.createTodoApp = createTodoApp
 
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function todoDisabledBtn () {
         let input = document.querySelector('input')
         let button = document.querySelector('.btn')
 
@@ -127,6 +143,14 @@
                 button.disabled = false
             }
         })
+    }
+
+    window.createTodoApp = createTodoApp
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        todoDisabledBtn()
+
     })
 })();
 
