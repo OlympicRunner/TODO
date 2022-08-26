@@ -66,7 +66,8 @@
     
     function createTodoApp(container, title = 'Список дел', todoBeforeList) {
 
-        
+        let saveStorage = []
+
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList()
@@ -74,8 +75,9 @@
         container.append(todoAppTitle)
         container.append(todoItemForm.form)
         container.append(todoList)
-
+        
         function createItem(newValue, todoAfterItem) {
+ 
             let todoItem = createTodoItem(newValue) 
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
@@ -87,17 +89,20 @@
                 }
             })
             todoList.append(todoItem.item)
-            if (todoAfterItem.done == true) {
-                todoItem.item.classList.toggle('list-group-item-success')
+
+            if (todoAfterItem !== undefined) {
+                if (todoAfterItem.done == true) {
+                    todoItem.item.classList.toggle('list-group-item-success')
+                }  
             }
+
+            let nthSave = {name: newValue}
+            console.log(nthSave)
         }
 
         function addObjects () {
             for (let todoAfterItem of todoBeforeList) {
                 createItem(todoAfterItem.name, todoAfterItem)
-                // if (todoAfterItem.done == true) {
-                //     todoItem.item.classList.toggle('list-group-item-success')
-                // }
             }
         }
         addObjects ()
@@ -114,6 +119,8 @@
             createItem(newValue)
             todoItemForm.input.value = ''
         })
+
+        // console.log(saveStorage)
         
     }
 
