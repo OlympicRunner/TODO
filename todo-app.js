@@ -63,21 +63,10 @@
             deleteButton
         }
     }
-
-
-    let todoBeforeList = [
-        { name: 'Построить скворешник', done: true },
-        { name: 'Назвать сына', done: false },
-        { name: 'закончить войну', done: false },
-        { name: 'Научится JS программированию', done: true }
-    ]
-
-
     
     function createTodoApp(container, title = 'Список дел', todoBeforeList) {
 
-        console.log(todoBeforeList)
-
+        
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList()
@@ -86,7 +75,7 @@
         container.append(todoItemForm.form)
         container.append(todoList)
 
-        function createItem(newValue) {
+        function createItem(newValue, todoAfterItem) {
             let todoItem = createTodoItem(newValue) 
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
@@ -98,20 +87,20 @@
                 }
             })
             todoList.append(todoItem.item)
+            if (todoAfterItem.done == true) {
+                todoItem.item.classList.toggle('list-group-item-success')
+            }
         }
 
-        // function nextNext () {
-
-
-        //     for (let beforeItem of todoBeforeList) {
-        //         createItem(beforeItem.name)
-        //         if (beforeItem.done == true) {
-        //             console.log('там где ', beforeItem.name)
-        //         }
-        //     }
-        // }
-
-        // nextNext()
+        function addObjects () {
+            for (let todoAfterItem of todoBeforeList) {
+                createItem(todoAfterItem.name, todoAfterItem)
+                // if (todoAfterItem.done == true) {
+                //     todoItem.item.classList.toggle('list-group-item-success')
+                // }
+            }
+        }
+        addObjects ()
 
         todoItemForm.form.addEventListener('submit', function(e) {
             e.preventDefault()
@@ -124,8 +113,6 @@
 
             createItem(newValue)
             todoItemForm.input.value = ''
-
-            document.querySelector('.btn').disabled = true
         })
         
     }
