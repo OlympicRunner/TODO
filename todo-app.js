@@ -1,5 +1,7 @@
 
 (function () {
+    let saveStorage = []   /// тут хранятся данные о пунктах списка
+    
     function createAppTitle(title) {
         let appTitle = document.createElement('h2')
         appTitle.innerHTML = title
@@ -66,8 +68,6 @@
     
     function createTodoApp(container, title = 'Список дел', todoBeforeList) {
 
-        let saveStorage = []
-
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList()
@@ -77,11 +77,14 @@
         container.append(todoList)
         
         function createItem(newValue, todoAfterItem) {
- 
-            let todoItem = createTodoItem(newValue) 
+            
+            let todoItem = createTodoItem(newValue)
+
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
             })
+
+            
 
             todoItem.deleteButton.addEventListener('click', function() {
                 if (confirm('Вы уверены?')) {
@@ -92,16 +95,26 @@
 
             if (todoAfterItem !== undefined) {
                 if (todoAfterItem.done == true) {
-                    todoItem.item.classList.toggle('list-group-item-success')
+                    todoItem.item.classList.add('list-group-item-success')
                 }  
             }
 
-            let nthSave = {name: newValue}
-            console.log(nthSave)
+            let checkDone = todoItem.item.classList.contains('list-group-item-success')
+            
+            let nthSave = {name: newValue, done: checkDone}
+            saveStorage.push(nthSave)
+            console.log(saveStorage)
+            // localStorage.setItem(nthSave)
+            // console.log(localStorage.getItem())
+            //////  а вот дальше будем действовать от savestorage , брать обьекты оттуда и кидать в localstorage, при этом переводя в строку, и задавая имя в виде индекса в localStorage.setItem('test', 1). И при обновлении страницы мы достаем из localstorage , переводим обратно в обьект и проводим как изначльынй список
+
+            
         }
 
+
         function addObjects () {
-            for (let todoAfterItem of todoBeforeList) {
+            let todoBeforeListMode = [...todoBeforeList, ...saveStorage]
+            for (let todoAfterItem of todoBeforeListMode) {
                 createItem(todoAfterItem.name, todoAfterItem)
             }
         }
@@ -119,8 +132,6 @@
             createItem(newValue)
             todoItemForm.input.value = ''
         })
-
-        // console.log(saveStorage)
         
     }
 
@@ -138,13 +149,15 @@
             }
         })
     }
+    // localStorage['codStorage'] = JSON.stringify(saveStorage);
+    
 
     window.createTodoApp = createTodoApp
 
 
     document.addEventListener('DOMContentLoaded', function () {
         todoDisabledBtn()
-
+        // createTodoApp(container, title = 'asd', saveStorage)
     })
 })();
 
