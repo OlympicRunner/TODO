@@ -65,9 +65,26 @@
             deleteButton
         }
     }
-    
-    function createTodoApp(container, title = 'Список дел', todoBeforeList) {
 
+
+
+    function updateStorage () {
+        
+        let getItem = JSON.parse(localStorage.getItem('todoStorage'))
+        saveStorage = getItem
+        localStorage.removeItem('todoStorage')
+        // console.log(saveStorage)
+    }
+
+    function recoverStorage () {
+        localStorage.setItem('todoStorage', JSON.stringify(saveStorage)) //////  обновляет saveStorage в localStorage каждый раз при использовании функции
+        // console.log('внесены изменения')
+    }
+    
+    
+    
+    function createTodoApp(container, title = 'Список дел', todoBeforeList) {   
+        
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList()
@@ -75,21 +92,49 @@
         container.append(todoAppTitle)
         container.append(todoItemForm.form)
         container.append(todoList)
+
+        updateStorage ()
         
         function createItem(newValue, todoAfterItem) {
             
             let todoItem = createTodoItem(newValue)
 
+            let saveStorageKey = String(todoItem.item.textContent).substring(0, String(todoItem.item.textContent).length - 13)
+
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
+
+                
+
+                let doneStatus = todoItem.item.classList.contains('list-group-item-success')
+
+                let i = -1
+
+                for (let elem of saveStorage) {
+                    i++
+                    if (Object.values(elem).includes(saveStorageKey)) {
+                        saveStorage[i].done = doneStatus 
+                        recoverStorage ()
+                    }
+                }
+                
             })
 
             
-
+            
             todoItem.deleteButton.addEventListener('click', function() {
                 if (confirm('Вы уверены?')) {
-                    todoItem.item.remove()
+                    console.log(saveStorage.find(item => item.name == saveStorageKey))
+                    todoItem.item.remove() /// и найти нужно его в saveStorage и удалить 
+                    // let i = -1
+                    // for (let saveDel of saveStorage) {
+                    //     i++
+                    //     if (saveDel.name == saveStorageKey) {
+                    //         saveStorage[i] = яФу
+                    //     }
+                    // }
                 }
+                recoverStorage ()
             })
             todoList.append(todoItem.item)
 
@@ -102,23 +147,55 @@
             let checkDone = todoItem.item.classList.contains('list-group-item-success')
             
             let nthSave = {name: newValue, done: checkDone}
-            saveStorage.push(nthSave)
-            console.log(saveStorage)
-            // localStorage.setItem(nthSave)
-            // console.log(localStorage.getItem())
-            //////  а вот дальше будем действовать от savestorage , брать обьекты оттуда и кидать в localstorage, при этом переводя в строку, и задавая имя в виде индекса в localStorage.setItem('test', 1). И при обновлении страницы мы достаем из localstorage , переводим обратно в обьект и проводим как изначльынй список
 
+            /////проверка на наличие такого елемента в saveStorage
+            let j = 0
+            for (let itm of saveStorage) {
+                if (itm.name == nthSave.name) {
+                    j++
+                }
+            }
+            if (j < 1) {
+                saveStorage.push(nthSave)
+            }
             
+           
+
+
+            // saveStorage.push(nthSave)
+            ////--------------------------------------------------
+            recoverStorage ()
         }
 
 
-        function addObjects () {
-            let todoBeforeListMode = [...todoBeforeList, ...saveStorage]
-            for (let todoAfterItem of todoBeforeListMode) {
+        function drawingObjects () {
+            // let todoBeforeListMode = [...todoBeforeList, ...saveStorage] /// Нужно сделать так чтоб 
+
+            for (let todoAfterItem of saveStorage) {
                 createItem(todoAfterItem.name, todoAfterItem)
             }
+            // saveStorage = []
+
+            for (let beforeItem of todoBeforeList) {
+                if ((saveStorage.find(item => item.name == beforeItem.name)) == undefined) {
+                    createItem(beforeItem.name, beforeItem)
+                }
+
+
+                // let j = 0
+                // for (let itm of saveStorage) {
+                //     if (itm.name == beforeItem.name) {
+                //         j++
+                //     }
+                // }
+                // if (j < 1) {
+                //     createItem(beforeItem.name, beforeItem)
+                // }
+
+                // createItem(beforeItem.name, beforeItem)
+            }
         }
-        addObjects ()
+        drawingObjects ()
 
         todoItemForm.form.addEventListener('submit', function(e) {
             e.preventDefault()
@@ -132,10 +209,10 @@
             createItem(newValue)
             todoItemForm.input.value = ''
         })
+      
         
     }
-
-
+    
 
     function todoDisabledBtn () {
         let input = document.querySelector('input')
@@ -149,16 +226,21 @@
             }
         })
     }
-    // localStorage['codStorage'] = JSON.stringify(saveStorage);
-    
+
+
+
 
     window.createTodoApp = createTodoApp
 
 
     document.addEventListener('DOMContentLoaded', function () {
+        // saveStorage.push()
+        // localStorage.setItem('todoStorage', JSON.stringify([{ name: 'Построить скворешник', done: true }])) ///обнуление/
         todoDisabledBtn()
-        // createTodoApp(container, title = 'asd', saveStorage)
+        // localStorage.setItem('123', JSON.stringify(saveStorage))
     })
+
+
 })();
 
 
