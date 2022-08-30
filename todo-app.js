@@ -65,22 +65,7 @@
     }
 
 
-    function updateStorage () {
-        let getItem = JSON.parse(localStorage.getItem('todoStorage'))
 
-        if (getItem !== null) {
-            saveStorage = getItem
-            localStorage.removeItem('todoStorage')
-        }
-
-
-        // console.log(saveStorage)
-    }
-
-    function recoverStorage () {
-        localStorage.setItem('todoStorage', JSON.stringify(saveStorage)) //////  обновляет saveStorage в localStorage каждый раз при использовании функции
-        // console.log('внесены изменения')
-    }
 
     
     
@@ -93,6 +78,23 @@
         container.append(todoAppTitle)
         container.append(todoItemForm.form)
         container.append(todoList)
+
+        function updateStorage () {
+            let getItem = JSON.parse(localStorage.getItem(title))
+    
+            if (getItem !== null) {
+                saveStorage = getItem
+                localStorage.removeItem(title)
+            }
+    
+    
+            // console.log(saveStorage)
+        }
+    
+        function recoverStorage () {
+            localStorage.setItem(title, JSON.stringify(saveStorage)) //////  обновляет saveStorage в localStorage каждый раз при использовании функции
+            // console.log('внесены изменения')
+        }
 
         updateStorage ()
         
@@ -223,10 +225,8 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
-        // saveStorage.push()
-        // localStorage.setItem('todoStorage', JSON.stringify([{ name: 'Построить скворешник', done: true }])) ///обнуление/
+
         todoDisabledBtn()
-        // localStorage.setItem('123', JSON.stringify(saveStorage))
     })
 
 
