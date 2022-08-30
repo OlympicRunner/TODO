@@ -38,8 +38,6 @@
         return list;
     }
 
-
-
     function createTodoItem(name) {
         let item = document.createElement('li')
         let buttonGroup = document.createElement('div')
@@ -67,12 +65,15 @@
     }
 
 
-
     function updateStorage () {
-        
         let getItem = JSON.parse(localStorage.getItem('todoStorage'))
-        saveStorage = getItem
-        localStorage.removeItem('todoStorage')
+
+        if (getItem !== null) {
+            saveStorage = getItem
+            localStorage.removeItem('todoStorage')
+        }
+
+
         // console.log(saveStorage)
     }
 
@@ -80,11 +81,11 @@
         localStorage.setItem('todoStorage', JSON.stringify(saveStorage)) //////  обновляет saveStorage в localStorage каждый раз при использовании функции
         // console.log('внесены изменения')
     }
+
     
     
-    
-    function createTodoApp(container, title = 'Список дел', todoBeforeList) {   
-        
+    function createTodoApp(container, title = 'Список дел', todoBeforeList = []) {   
+        // let todoBeforeList = [{''}]
         let todoAppTitle = createAppTitle(title)
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList()
@@ -104,8 +105,6 @@
             todoItem.doneButton.addEventListener('click', function() {
                 todoItem.item.classList.toggle('list-group-item-success')
 
-                
-
                 let doneStatus = todoItem.item.classList.contains('list-group-item-success')
 
                 let i = -1
@@ -124,15 +123,20 @@
             
             todoItem.deleteButton.addEventListener('click', function() {
                 if (confirm('Вы уверены?')) {
-                    console.log(saveStorage.find(item => item.name == saveStorageKey))
                     todoItem.item.remove() /// и найти нужно его в saveStorage и удалить 
-                    // let i = -1
-                    // for (let saveDel of saveStorage) {
-                    //     i++
-                    //     if (saveDel.name == saveStorageKey) {
-                    //         saveStorage[i] = яФу
-                    //     }
-                    // }
+                    let l = 0
+                    for (let findStor of saveStorage) {
+                        
+                        if (findStor.name !== saveStorageKey) {
+                            l++
+                        } else {
+                            console.log(l)
+                            break;
+                            
+                        }
+                    }
+                    saveStorage.splice(l, 1)
+                    console.log(saveStorage);
                 }
                 recoverStorage ()
             })
@@ -158,41 +162,20 @@
             if (j < 1) {
                 saveStorage.push(nthSave)
             }
-            
-           
-
-
-            // saveStorage.push(nthSave)
-            ////--------------------------------------------------
             recoverStorage ()
         }
-
+        
 
         function drawingObjects () {
-            // let todoBeforeListMode = [...todoBeforeList, ...saveStorage] /// Нужно сделать так чтоб 
 
             for (let todoAfterItem of saveStorage) {
                 createItem(todoAfterItem.name, todoAfterItem)
             }
-            // saveStorage = []
 
             for (let beforeItem of todoBeforeList) {
                 if ((saveStorage.find(item => item.name == beforeItem.name)) == undefined) {
                     createItem(beforeItem.name, beforeItem)
                 }
-
-
-                // let j = 0
-                // for (let itm of saveStorage) {
-                //     if (itm.name == beforeItem.name) {
-                //         j++
-                //     }
-                // }
-                // if (j < 1) {
-                //     createItem(beforeItem.name, beforeItem)
-                // }
-
-                // createItem(beforeItem.name, beforeItem)
             }
         }
         drawingObjects ()
@@ -206,7 +189,13 @@
 
             let newValue = todoItemForm.input.value
 
-            createItem(newValue)
+            if (saveStorage.find(item => item.name == newValue)) {
+                alert('Такие БуКвЫ уже были')
+            } else {
+                createItem(newValue)
+            }
+
+            
             todoItemForm.input.value = ''
         })
       
