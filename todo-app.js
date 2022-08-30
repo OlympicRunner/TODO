@@ -132,13 +132,10 @@
                         if (findStor.name !== saveStorageKey) {
                             l++
                         } else {
-                            console.log(l)
                             break;
-                            
                         }
                     }
                     saveStorage.splice(l, 1)
-                    console.log(saveStorage);
                 }
                 recoverStorage ()
             })
