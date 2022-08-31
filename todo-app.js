@@ -83,7 +83,7 @@
         function updateStorage () {
             let getItem = JSON.parse(localStorage.getItem(title))
             let getItemFilter = JSON.parse(localStorage.getItem(title + 'Filter'))
-
+            
     
             if (getItem !== null) {
                 saveStorage = getItem
@@ -94,7 +94,7 @@
                 saveStorageFilter = getItemFilter
                 // localStorage.removeItem(title + 'Filter')
             }
-            
+
     
             // console.log(saveStorage)
         }
@@ -169,6 +169,7 @@
             if (j < 1) {
                 saveStorage.push(nthSave)
             }
+            // console.log('элемент создан')
             recoverStorage ()
         }
         
@@ -182,10 +183,13 @@
             }
 
             for (let beforeItem of todoBeforeList) {
-                if (saveStorage.find(item => item.name == beforeItem.name) == undefined && saveStorageFilter.find(item => item.name) == undefined) {
-                    createItem(beforeItem.name, beforeItem)
-                    saveStorageFilter.push(beforeItem)
-                    localStorage.setItem( nameFilter, JSON.stringify(saveStorageFilter))
+                if (saveStorage.find(item => item.name == beforeItem.name) == undefined ) {
+                    if (saveStorageFilter.find(item => item.name == beforeItem.name) == undefined) {
+                        createItem(beforeItem.name, beforeItem)
+                        saveStorageFilter.push(beforeItem)
+                        localStorage.setItem(nameFilter, JSON.stringify(saveStorageFilter))
+                    }
+                        
                 }
             }
         }
@@ -234,7 +238,7 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
-
+        // console.log(saveStorageFilter)
         todoDisabledBtn()
     })
 
