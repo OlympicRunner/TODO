@@ -1,6 +1,7 @@
 
 (function () {
     let saveStorage = []   /// тут хранятся данные о пунктах списка
+    let saveStorageFilter = [] /// тут хранятся список уже добавленнных из вне --- цель не повторять их подгрузку при обновлении
     
     function createAppTitle(title) {
         let appTitle = document.createElement('h2')
@@ -81,12 +82,19 @@
 
         function updateStorage () {
             let getItem = JSON.parse(localStorage.getItem(title))
+            let getItemFilter = JSON.parse(localStorage.getItem(title + 'Filter'))
+
     
             if (getItem !== null) {
                 saveStorage = getItem
                 localStorage.removeItem(title)
             }
-    
+
+            if (getItemFilter !== null) {
+                saveStorageFilter = getItemFilter
+                // localStorage.removeItem(title + 'Filter')
+            }
+            
     
             // console.log(saveStorage)
         }
@@ -167,13 +175,17 @@
 
         function drawingObjects () {
 
+            let nameFilter = title + 'Filter'
+
             for (let todoAfterItem of saveStorage) {
                 createItem(todoAfterItem.name, todoAfterItem)
             }
 
             for (let beforeItem of todoBeforeList) {
-                if ((saveStorage.find(item => item.name == beforeItem.name)) == undefined) {
+                if (saveStorage.find(item => item.name == beforeItem.name) == undefined && saveStorageFilter.find(item => item.name) == undefined) {
                     createItem(beforeItem.name, beforeItem)
+                    saveStorageFilter.push(beforeItem)
+                    localStorage.setItem( nameFilter, JSON.stringify(saveStorageFilter))
                 }
             }
         }
